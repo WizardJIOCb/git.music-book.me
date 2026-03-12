@@ -517,6 +517,14 @@ function latestUserMessage(messages) {
 
 function getDirectAssistantReply(message) {
   const text = String(message || "").toLowerCase();
+  const matchedBooks = STORE_FACTS.books.filter((book) => {
+    const aliases = [book.title, book.slug, book.url, ...(Array.isArray(book.alternateUrls) ? book.alternateUrls : [])]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+    return text.includes(book.title.toLowerCase()) || (book.slug && text.includes(book.slug)) || aliases.includes(text);
+  });
+  const asksBookPrice = /(сколько\s+стоит|какая\s+цена|цена|стоимость|сколько)/.test(text);
   const mentionsRomana = /(романа|роману|романе|романы|romana|romanasbook)/.test(text);
   const mentionsSocialChannel = /(соц\.?\s*сети|соцсет|социальн|инстаграм|instagram|телеграм|telegram|тг|tg|вк|\bvk\b|рутуб|rutube|max\.ru|\bmax\b|ютуб|youtube|аккаунт|аккаунты|канал|каналы|страниц|ссылка|ссылки|подписа|где найти|где посмотреть)/.test(text);
   const asksAboutRomanaSocials = mentionsRomana && mentionsSocialChannel;
@@ -554,6 +562,20 @@ function getDirectAssistantReply(message) {
     /^(а\s+)?двоюрд?ный\s+брат\s+есть\??$/.test(text) ||
     /^(а\s+)?двоюродный\s+брат\s+есть\??$/.test(text);
   const asksAboutGulik = /(гулик)/.test(text);
+
+  if (asksBookPrice && matchedBooks.length === 1) {
+    const book = matchedBooks[0];
+    const priceLine =
+      typeof book.priceRub === "number"
+        ? `Книга «${book.title}» стоит ${book.priceRub} ₽.`
+        : `Точную текущую цену книги «${book.title}» лучше посмотреть на странице книги.`;
+    const availabilityLine = book.availability ? book.availability : "Книга доступна на странице книги.";
+    return [
+      priceLine,
+      availabilityLine,
+      `Страница книги: ${book.url}`
+    ].join("\n");
+  }
 
   if (asksAboutRomanaSocials) {
     return [
