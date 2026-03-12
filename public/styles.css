@@ -119,6 +119,7 @@ h1 {
   gap: 10px;
   flex-wrap: wrap;
   justify-content: flex-end;
+  position: relative;
 }
 
 .ghost-button,
@@ -145,12 +146,25 @@ h1 {
 .conversation-meta {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   color: var(--muted);
   font-size: 0.92rem;
 }
 
 .conversation-meta--top {
   min-height: 44px;
+}
+
+.panel-menu-toggle {
+  display: none;
+}
+
+.panel-menu {
+  display: none;
+}
+
+.panel-menu:not(.hidden) {
+  display: none;
 }
 
 .messages {
@@ -403,12 +417,61 @@ button:disabled,
 
   .panel-actions {
     width: 100%;
-    justify-content: flex-start;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   button,
-  .ghost-button {
+  .ghost-button,
+  .conversation-meta {
     width: 100%;
+  }
+
+  .panel-actions > .ghost-button:not(.panel-menu-toggle) {
+    display: none;
+  }
+
+  .panel-menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .panel-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    display: none;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: rgba(255, 250, 240, 0.98);
+    box-shadow: 0 18px 40px rgba(76, 39, 16, 0.14);
+    backdrop-filter: blur(16px);
+    z-index: 8;
+  }
+
+  .panel-menu:not(.hidden) {
+    display: grid;
+    gap: 8px;
+  }
+
+  .panel-menu__button {
+    width: 100%;
+  }
+
+  .conversation-meta--top {
+    order: -1;
+    min-height: 48px;
+    padding-inline: 16px;
+    text-align: center;
+  }
+
+  .suggestions {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
   .console-line {

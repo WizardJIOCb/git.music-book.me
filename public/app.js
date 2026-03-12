@@ -6,6 +6,10 @@ const templateEl = document.getElementById("message-template");
 const suggestionsEl = document.getElementById("suggestions");
 const shareButtonEl = document.getElementById("share-button");
 const newChatButtonEl = document.getElementById("new-chat-button");
+const actionsMenuButtonEl = document.getElementById("actions-menu-button");
+const actionsMenuEl = document.getElementById("actions-menu");
+const menuShareButtonEl = document.getElementById("menu-share-button");
+const menuNewChatButtonEl = document.getElementById("menu-new-chat-button");
 const conversationMetaEl = document.getElementById("conversation-meta");
 const consoleTriggerTitleEl = document.getElementById("console-trigger-title");
 const commandConsoleEl = document.getElementById("command-console");
@@ -262,6 +266,15 @@ function setPending(nextPending) {
   promptEl.disabled = nextPending;
   shareButtonEl.disabled = nextPending;
   newChatButtonEl.disabled = nextPending;
+  if (actionsMenuButtonEl) {
+    actionsMenuButtonEl.disabled = nextPending;
+  }
+  if (menuShareButtonEl) {
+    menuShareButtonEl.disabled = nextPending;
+  }
+  if (menuNewChatButtonEl) {
+    menuNewChatButtonEl.disabled = nextPending;
+  }
   submitButtonEl.textContent = nextPending ? "Думаю..." : "Отправить";
 
   for (const button of suggestionsEl.querySelectorAll("button")) {
@@ -281,6 +294,7 @@ function openConsole() {
   commandConsoleEl.classList.remove("hidden");
   commandConsoleEl.setAttribute("aria-hidden", "false");
   resetConsoleHistoryNavigation();
+  closeActionsMenu();
   focusWithoutScroll(consoleInputEl);
 }
 
@@ -288,6 +302,28 @@ function closeConsole() {
   commandConsoleEl.classList.add("hidden");
   commandConsoleEl.setAttribute("aria-hidden", "true");
   focusWithoutScroll(promptEl);
+}
+
+function openActionsMenu() {
+  actionsMenuEl?.classList.remove("hidden");
+  actionsMenuButtonEl?.setAttribute("aria-expanded", "true");
+}
+
+function closeActionsMenu() {
+  actionsMenuEl?.classList.add("hidden");
+  actionsMenuButtonEl?.setAttribute("aria-expanded", "false");
+}
+
+function toggleActionsMenu() {
+  if (!actionsMenuEl || !actionsMenuButtonEl) {
+    return;
+  }
+
+  if (actionsMenuEl.classList.contains("hidden")) {
+    openActionsMenu();
+  } else {
+    closeActionsMenu();
+  }
 }
 
 async function copyShareLink() {
@@ -299,6 +335,13 @@ async function copyShareLink() {
   const shareUrl = `${window.location.origin}${window.location.pathname}?c=${currentConversation.id}`;
   await navigator.clipboard.writeText(shareUrl);
   addConsoleLine("system", `Ссылка скопирована: ${shareUrl}`);
+}
+
+function startNewChat() {
+  currentConversation = null;
+  updateUrlForConversation("");
+  renderConversation(null);
+  closeActionsMenu();
 }
 
 function consoleHeaders() {
@@ -778,18 +821,42 @@ suggestionsEl.addEventListener("click", async (event) => {
 shareButtonEl.addEventListener("click", async () => {
   try {
     await copyShareLink();
+    closeActionsMenu();
   } catch (error) {
     addConsoleLine("system", `Не удалось скопировать ссылку: ${error.message}`);
   }
 });
 
-newChatButtonEl.addEventListener("click", () => {
-  currentConversation = null;
-  updateUrlForConversation("");
-  renderConversation(null);
+newChatButtonEl.addEventListener("click", startNewChat);
+actionsMenuButtonEl?.addEventListener("click", toggleActionsMenu);
+menuNewChatButtonEl?.addEventListener("click", startNewChat);
+menuShareButtonEl?.addEventListener("click", async () => {
+  try {
+    await copyShareLink();
+    closeActionsMenu();
+  } catch (error) {
+    addConsoleLine("system", `Не удалось скопировать ссылку: ${error.message}`);
+  }
 });
 
 consoleBackdropEl.addEventListener("click", closeConsole);
+
+document.addEventListener("click", (event) => {
+  if (!actionsMenuEl || !actionsMenuButtonEl) {
+    return;
+  }
+
+  const target = event.target;
+  if (!(target instanceof Node)) {
+    return;
+  }
+
+  if (actionsMenuEl.contains(target) || actionsMenuButtonEl.contains(target)) {
+    return;
+  }
+
+  closeActionsMenu();
+});
 
 consoleFormEl.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -829,6 +896,11 @@ window.addEventListener("keydown", (event) => {
     } else {
       closeConsole();
     }
+    return;
+  }
+
+  if (event.key === "Escape" && actionsMenuEl && !actionsMenuEl.classList.contains("hidden")) {
+    closeActionsMenu();
     return;
   }
 
