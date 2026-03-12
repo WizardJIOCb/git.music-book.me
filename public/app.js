@@ -45,6 +45,7 @@ let consoleDraftValue = "";
 let consoleTapCount = 0;
 let consoleTapStartedAt = 0;
 let shareFeedbackTimer = 0;
+let shareFeedbackHideTimer = 0;
 
 function loadConsoleHistory() {
   try {
@@ -361,15 +362,21 @@ function showShareFeedback(message) {
     return;
   }
 
-  shareFeedbackEl.textContent = message;
-  shareFeedbackEl.classList.remove("hidden");
-
   if (shareFeedbackTimer) {
     window.clearTimeout(shareFeedbackTimer);
   }
+  if (shareFeedbackHideTimer) {
+    window.clearTimeout(shareFeedbackHideTimer);
+  }
+
+  shareFeedbackEl.textContent = message;
+  shareFeedbackEl.classList.remove("hidden");
 
   shareFeedbackTimer = window.setTimeout(() => {
     shareFeedbackEl.classList.add("hidden");
+    shareFeedbackHideTimer = window.setTimeout(() => {
+      shareFeedbackHideTimer = 0;
+    }, 180);
   }, 1800);
 }
 
