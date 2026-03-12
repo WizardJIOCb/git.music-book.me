@@ -466,6 +466,9 @@ button:disabled,
 
   .panel {
     border-radius: 24px;
+    min-height: calc(100vh - 190px - env(safe-area-inset-bottom, 0px));
+    display: flex;
+    flex-direction: column;
   }
 
   button,
@@ -562,12 +565,13 @@ button:disabled,
 
   .suggestions {
     display: flex;
+    flex-wrap: nowrap;
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x proximity;
     gap: 8px;
     padding-top: 12px;
-    padding-inline: 12px;
+    padding-inline: 16px;
     padding-bottom: 4px;
     -webkit-overflow-scrolling: touch;
   }
@@ -586,10 +590,11 @@ button:disabled,
   }
 
   .messages {
-    min-height: 320px;
+    flex: 1 1 auto;
+    min-height: 420px;
     max-height: none;
     padding-top: 18px;
-    padding-bottom: 18px;
+    padding-bottom: 24px;
   }
 
   .message {
@@ -607,8 +612,9 @@ button:disabled,
     position: sticky;
     bottom: 0;
     z-index: 6;
+    margin-top: auto;
     padding-top: 14px;
-    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
     background: linear-gradient(180deg, rgba(255, 252, 246, 0.82), rgba(255, 250, 240, 0.98) 18%);
     backdrop-filter: blur(16px);
   }
@@ -623,6 +629,11 @@ button:disabled,
   .composer-bar {
     width: 100%;
     gap: 12px;
+  }
+
+  #submit-button {
+    margin-top: auto;
+    margin-bottom: 0;
   }
 
   .hint {
