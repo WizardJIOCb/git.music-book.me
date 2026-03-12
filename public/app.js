@@ -162,6 +162,14 @@ function scrollMessagesToBottom(behavior = "auto") {
   });
 }
 
+function smoothScrollToLatestReply() {
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
+      scrollMessagesToBottom("smooth");
+    });
+  });
+}
+
 function renderInlineAssistantContent(value) {
   return value
     .replace(/\[(https?:\/\/[^\]\s]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
@@ -565,11 +573,13 @@ async function submitPrompt(prompt) {
     updateUrlForConversation(currentConversation.id);
     renderConversation(currentConversation);
     promptEl.value = "";
+    smoothScrollToLatestReply();
   } catch (error) {
     addMessage(
       "assistant",
       `Пока не получилось получить ответ: ${error.message}. Попробуй переформулировать вопрос чуть короче.`
     );
+    smoothScrollToLatestReply();
   } finally {
     setPending(false);
     focusWithoutScroll(promptEl);
