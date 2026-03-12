@@ -568,9 +568,9 @@ function latestUserMessage(messages) {
 function getOrderAssistantReply(message) {
   const text = normalizeSearchText(message);
   const criteria = extractOrderLookupCriteria(message);
-  const hasDirectLookup = Boolean(criteria.phone || criteria.trackNumber);
+  const hasDirectPhoneLookup = Boolean(criteria.phone) && !criteria.trackNumber;
 
-  if (!isOrderQuestion(text) && !hasDirectLookup) {
+  if (!isOrderQuestion(text) && !hasDirectPhoneLookup) {
     return "";
   }
 
