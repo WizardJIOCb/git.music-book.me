@@ -416,7 +416,8 @@ button:disabled,
   }
 
   h1 {
-    font-size: clamp(2.2rem, 11vw, 3.6rem);
+    font-size: clamp(2rem, 10vw, 3.1rem);
+    max-width: 7.2em;
   }
 
   .hero-description-toggle {
@@ -562,19 +563,25 @@ button:disabled,
   .suggestions {
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: minmax(78%, 86%);
+    grid-auto-columns: minmax(62%, max-content);
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x proximity;
+    gap: 8px;
+    padding-inline: 16px;
     padding-bottom: 4px;
     -webkit-overflow-scrolling: touch;
   }
 
   .suggestion {
-    min-height: 54px;
+    width: auto;
+    min-height: 46px;
+    max-width: 86vw;
     text-align: left;
     scroll-snap-align: start;
-    padding: 14px 16px;
+    padding: 10px 14px;
+    white-space: normal;
+    line-height: 1.35;
   }
 
   .messages {
