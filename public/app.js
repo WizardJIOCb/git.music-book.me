@@ -6,11 +6,16 @@ const templateEl = document.getElementById("message-template");
 const suggestionsEl = document.getElementById("suggestions");
 const shareButtonEl = document.getElementById("share-button");
 const newChatButtonEl = document.getElementById("new-chat-button");
+const heroDescriptionToggleEl = document.getElementById("hero-description-toggle");
+const heroDescriptionContentEl = document.getElementById("hero-description-content");
 const actionsMenuButtonEl = document.getElementById("actions-menu-button");
+const actionsMenuBackdropEl = document.getElementById("actions-menu-backdrop");
 const actionsMenuEl = document.getElementById("actions-menu");
+const actionsMenuCloseButtonEl = document.getElementById("actions-menu-close-button");
 const menuShareButtonEl = document.getElementById("menu-share-button");
 const menuNewChatButtonEl = document.getElementById("menu-new-chat-button");
 const conversationMetaEl = document.getElementById("conversation-meta");
+const actionsMenuMetaEl = document.getElementById("actions-menu-meta");
 const consoleTriggerTitleEl = document.getElementById("console-trigger-title");
 const commandConsoleEl = document.getElementById("command-console");
 const consoleBackdropEl = document.getElementById("console-backdrop");
@@ -238,14 +243,22 @@ function renderConversation(conversation) {
 }
 
 function updateConversationMeta() {
+  let text = "Диалог ещё не сохранён";
   if (!currentConversation || !currentConversation.id) {
-    conversationMetaEl.textContent = "Диалог ещё не сохранён";
+    conversationMetaEl.textContent = text;
+    if (actionsMenuMetaEl) {
+      actionsMenuMetaEl.textContent = text;
+    }
     return;
   }
 
   const title = currentConversation.title || "Диалог";
   const count = currentConversation.messageCount ?? currentConversation.messages?.length ?? 0;
-  conversationMetaEl.textContent = `${title} • ${count} сообщений`;
+  text = `${title} • ${count} сообщений`;
+  conversationMetaEl.textContent = text;
+  if (actionsMenuMetaEl) {
+    actionsMenuMetaEl.textContent = text;
+  }
 }
 
 function updateUrlForConversation(conversationId) {
@@ -305,12 +318,16 @@ function closeConsole() {
 }
 
 function openActionsMenu() {
+  actionsMenuBackdropEl?.classList.remove("hidden");
   actionsMenuEl?.classList.remove("hidden");
+  actionsMenuEl?.setAttribute("aria-hidden", "false");
   actionsMenuButtonEl?.setAttribute("aria-expanded", "true");
 }
 
 function closeActionsMenu() {
+  actionsMenuBackdropEl?.classList.add("hidden");
   actionsMenuEl?.classList.add("hidden");
+  actionsMenuEl?.setAttribute("aria-hidden", "true");
   actionsMenuButtonEl?.setAttribute("aria-expanded", "false");
 }
 
@@ -324,6 +341,16 @@ function toggleActionsMenu() {
   } else {
     closeActionsMenu();
   }
+}
+
+function toggleHeroDescription() {
+  if (!heroDescriptionContentEl || !heroDescriptionToggleEl) {
+    return;
+  }
+
+  const isOpen = heroDescriptionContentEl.classList.contains("is-open");
+  heroDescriptionContentEl.classList.toggle("is-open", !isOpen);
+  heroDescriptionToggleEl.setAttribute("aria-expanded", String(!isOpen));
 }
 
 async function copyShareLink() {
@@ -829,6 +856,8 @@ shareButtonEl.addEventListener("click", async () => {
 
 newChatButtonEl.addEventListener("click", startNewChat);
 actionsMenuButtonEl?.addEventListener("click", toggleActionsMenu);
+actionsMenuCloseButtonEl?.addEventListener("click", closeActionsMenu);
+actionsMenuBackdropEl?.addEventListener("click", closeActionsMenu);
 menuNewChatButtonEl?.addEventListener("click", startNewChat);
 menuShareButtonEl?.addEventListener("click", async () => {
   try {
@@ -886,6 +915,8 @@ consoleInputEl.addEventListener("keydown", (event) => {
 consoleTriggerTitleEl?.addEventListener("click", () => {
   registerConsoleTriggerTap();
 });
+
+heroDescriptionToggleEl?.addEventListener("click", toggleHeroDescription);
 
 window.addEventListener("keydown", (event) => {
   const isTilde = event.key === "~" || event.key === "`";

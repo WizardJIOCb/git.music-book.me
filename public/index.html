@@ -22,28 +22,40 @@
       <section class="hero">
         <p class="eyebrow"><a href="https://music-book.me" target="_blank" rel="noreferrer">music-book.me</a></p>
         <h1 id="console-trigger-title">Music Book GPT</h1>
-        <p class="lede">
-          Цифровой ассистент для знакомства с проектом и книгами издательства Romana's book. Он может рассказать о книгах,
-          дать ссылку на страницу конкретной книги, подсказать по покупке, цене, доставке, самовывозу, рассказать кто такая Романа
-          и помочь сориентироваться по сайту.
-        </p>
+        <button type="button" class="hero-description-toggle" id="hero-description-toggle" aria-expanded="false" aria-controls="hero-description-content">О цифровом ассистенте</button>
+        <div class="hero-description-content" id="hero-description-content">
+          <p class="lede">
+            Цифровой ассистент для знакомства с проектом и книгами издательства Romana's book. Он может рассказать о книгах,
+            дать ссылку на страницу конкретной книги, подсказать по покупке, цене, доставке, самовывозу, рассказать кто такая Романа
+            и помочь сориентироваться по сайту.
+          </p>
+        </div>
       </section>
 
       <section class="panel">
         <div class="panel-head">
-          <div>
+          <div class="panel-head-copy">
             <p class="panel-title">Поговорить с ассистентом</p>
             <p class="panel-subtitle">Спроси о проекте, книге, покупке, доставке или следующем шаге</p>
           </div>
           <div class="panel-actions">
             <button type="button" class="ghost-button" id="new-chat-button">Новый диалог</button>
             <button type="button" class="ghost-button" id="share-button">Поделиться</button>
-            <button type="button" class="ghost-button panel-menu-toggle" id="actions-menu-button" aria-expanded="false" aria-controls="actions-menu">Меню</button>
+            <button type="button" class="ghost-button panel-menu-toggle" id="actions-menu-button" aria-expanded="false" aria-controls="actions-menu" aria-label="Открыть основное меню">
+              <span class="panel-menu-toggle__icon" aria-hidden="true"></span>
+              <span class="panel-menu-toggle__label">Меню</span>
+            </button>
             <div class="conversation-meta conversation-meta--top" id="conversation-meta">Диалог ещё не сохранён</div>
-            <div class="panel-menu hidden" id="actions-menu">
+            <div class="panel-menu-backdrop hidden" id="actions-menu-backdrop"></div>
+            <aside class="panel-menu hidden" id="actions-menu" aria-hidden="true">
+              <div class="panel-menu__header">
+                <p class="panel-menu__title">Основное меню</p>
+                <button type="button" class="ghost-button panel-menu__close" id="actions-menu-close-button">Закрыть</button>
+              </div>
+              <div class="conversation-meta panel-menu__meta" id="actions-menu-meta">Диалог ещё не сохранён</div>
               <button type="button" class="ghost-button panel-menu__button" id="menu-new-chat-button">Новый диалог</button>
               <button type="button" class="ghost-button panel-menu__button" id="menu-share-button">Поделиться</button>
-            </div>
+            </aside>
           </div>
         </div>
 
