@@ -54,3 +54,20 @@ wrangler deploy
 ```
 
 После деплоя нужно прописать URL worker в `OPENAI_BASE_URL` основного сайта.
+
+## Deploy на сервере
+
+На сервере проект живёт в `/var/www/gpt.music-book.me` и обновляется через git.
+
+Быстрый деплой:
+
+```bash
+cd /var/www/gpt.music-book.me
+bash deploy.sh
+```
+
+Что делает `deploy.sh`:
+
+- подтягивает изменения из `origin/main`
+- проверяет синтаксис `server.js` и `public/app.js`
+- перезапускает `pm2`-процесс `gpt-music-book`
