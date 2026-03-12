@@ -571,7 +571,7 @@ function getOrderAssistantReply(message) {
   const hasDirectPhoneLookup = Boolean(criteria.phone) && !criteria.trackNumber;
   const hasDirectTrackLookup = Boolean(criteria.trackNumber);
   const hasSpecificOrderIntent =
-    /(мой|моя|моего|моему|заказ|получател|адрес|по адресу|по имени|найди заказ|статус заказа|где мой)/i.test(text) &&
+    /(получател|адрес|по адресу|по имени)/i.test(text) &&
     Boolean(criteria.queryTokens && criteria.queryTokens.length >= 3);
 
   if (!isOrderQuestion(text) && !hasDirectPhoneLookup && !hasDirectTrackLookup) {
