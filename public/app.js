@@ -163,11 +163,15 @@ function scrollMessagesToBottom(behavior = "auto") {
 }
 
 function smoothScrollToLatestMessage() {
+  scrollMessagesToBottom("auto");
   window.requestAnimationFrame(() => {
     window.requestAnimationFrame(() => {
       scrollMessagesToBottom("smooth");
     });
   });
+  window.setTimeout(() => {
+    scrollMessagesToBottom("smooth");
+  }, 180);
 }
 
 function renderInlineAssistantContent(value) {
