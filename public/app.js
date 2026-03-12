@@ -488,7 +488,7 @@ async function runCommand(rawCommand) {
   if (command === "help") {
     addConsoleLine(
       "system",
-      "help | history | history clear | dialogs | dialogs <поиск> | load <id> | rename <current|id> <новое имя> | delete <current|id> | model | model <id> | share | new | clear | test <текст> | ping"
+      "help | history | history clear | dialogs | dialogs last | dialogs first | dialogs all | dialogs <число> | dialogs <поиск> | load <id> | rename <current|id> <новое имя> | delete <current|id> | model | model <id> | share | new | clear | test <текст> | ping"
     );
     return;
   }
@@ -515,7 +515,28 @@ async function runCommand(rawCommand) {
   }
 
   if (command === "dialogs" || command.startsWith("dialogs ")) {
-    const query = command === "dialogs" ? "" : command.slice(8).trim().toLowerCase();
+    const rawArgument = command === "dialogs" ? "" : command.slice(8).trim();
+    const normalizedArgument = rawArgument.toLowerCase();
+    let query = "";
+    let dialogsToShow = 12;
+    let modeLabel = `последние ${dialogsToShow}`;
+
+    if (!rawArgument || normalizedArgument === "last") {
+      dialogsToShow = 12;
+      modeLabel = `последние ${dialogsToShow}`;
+    } else if (normalizedArgument === "first") {
+      dialogsToShow = 12;
+      modeLabel = `первые ${dialogsToShow}`;
+    } else if (normalizedArgument === "all") {
+      dialogsToShow = Infinity;
+      modeLabel = "все";
+    } else if (/^\d+$/.test(rawArgument)) {
+      dialogsToShow = Math.max(1, Number.parseInt(rawArgument, 10));
+      modeLabel = `последние ${dialogsToShow}`;
+    } else {
+      query = normalizedArgument;
+    }
+
     const conversations = await listConversations();
     const filtered = query
       ? conversations.filter((conversation) => {
@@ -538,8 +559,14 @@ async function runCommand(rawCommand) {
       return;
     }
 
-    addConsoleLine("system", `Найдено диалогов: ${filtered.length}. Показываю последние ${Math.min(filtered.length, 12)}.`);
-    for (const conversation of filtered.slice(-12)) {
+    const visibleConversations =
+      normalizedArgument === "first" ? filtered.slice(0, dialogsToShow) : filtered.slice(-dialogsToShow);
+
+    addConsoleLine(
+      "system",
+      `Найдено диалогов: ${filtered.length}. Показываю ${modeLabel === "все" ? "все" : modeLabel.replace(String(dialogsToShow), String(Math.min(filtered.length, dialogsToShow)))}.`
+    );
+    for (const conversation of visibleConversations) {
       const model = conversation.modelOverride || "default";
       addConsoleLine(
         "dialog",
