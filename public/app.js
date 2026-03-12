@@ -162,17 +162,25 @@ function scrollMessagesToBottom(behavior = "auto") {
   });
 }
 
+function isMobileLayout() {
+  return window.matchMedia("(max-width: 760px)").matches;
+}
+
 function smoothScrollToLatestMessage() {
   scrollMessagesToBottom("auto");
   window.requestAnimationFrame(() => {
     window.requestAnimationFrame(() => {
       scrollMessagesToBottom("smooth");
-      formEl?.scrollIntoView({ behavior: "smooth", block: "end" });
+      if (isMobileLayout()) {
+        formEl?.scrollIntoView({ behavior: "smooth", block: "end" });
+      }
     });
   });
   window.setTimeout(() => {
     scrollMessagesToBottom("smooth");
-    formEl?.scrollIntoView({ behavior: "smooth", block: "end" });
+    if (isMobileLayout()) {
+      formEl?.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
   }, 180);
 }
 
