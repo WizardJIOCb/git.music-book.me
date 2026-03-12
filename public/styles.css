@@ -63,7 +63,7 @@ body {
 
 h1 {
   margin: 0;
-  font-size: clamp(2.6rem, 6vw, 5.4rem);
+  font-size: 2.4rem;
   line-height: 0.95;
 }
 
@@ -735,5 +735,4 @@ button:disabled,
     gap: 2px;
   }
 }
-
 
