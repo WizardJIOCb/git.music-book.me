@@ -71,3 +71,24 @@ bash deploy.sh
 - подтягивает изменения из `origin/main`
 - проверяет синтаксис `server.js` и `public/app.js`
 - перезапускает `pm2`-процесс `gpt-music-book`
+
+### Деплой с локального Windows-компьютера
+
+Можно деплоить одной командой из корня проекта:
+
+```powershell
+.\deploy-prod.ps1
+```
+
+Скрипт:
+
+- делает `git push origin main`
+- подключается по SSH к `root@82.146.42.213`
+- запускает на сервере `bash deploy.sh`
+
+Полезные варианты:
+
+```powershell
+.\deploy-prod.ps1 -SkipPush
+.\deploy-prod.ps1 -Branch main
+```
