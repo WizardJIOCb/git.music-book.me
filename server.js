@@ -578,8 +578,12 @@ function getOrderAssistantReply(message) {
     return "";
   }
 
+  if (!criteria.phone && !criteria.trackNumber && (!criteria.queryTokens || criteria.queryTokens.length < 3)) {
+    return "Я помогу проверить статус заказа. Пришлите, пожалуйста, номер телефона, трек-номер или полные ФИО вместе с адресом доставки.";
+  }
+
   if (!hasDirectPhoneLookup && !hasDirectTrackLookup && !hasSpecificOrderIntent) {
-    return "";
+    return "Я помогу проверить статус заказа. Пришлите, пожалуйста, номер телефона, трек-номер или полные ФИО вместе с адресом доставки.";
   }
 
   if (!criteria.phone && !criteria.trackNumber && !(criteria.queryTokens && criteria.queryTokens.length >= 3)) {
