@@ -15,6 +15,8 @@ git checkout "$BRANCH"
 git pull --ff-only origin "$BRANCH"
 
 node --check server.js
+node --check lib/orders.js
+node --check scripts/import-tilda-orders.js
 node --check public/app.js
 
 pm2 restart "$PM2_APP_NAME"

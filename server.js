@@ -3,6 +3,18 @@ const fs = require("node:fs");
 const path = require("node:path");
 const crypto = require("node:crypto");
 const { URL } = require("node:url");
+const {
+  extractOrderLookupCriteria,
+  findMatchingOrders,
+  formatOrderReply,
+  inferOrderFromPayload,
+  isOrderQuestion,
+  loadOrder,
+  mergeOrders,
+  normalizeLooseText,
+  normalizeSearchText,
+  saveOrder
+} = require("./lib/orders");
 
 loadEnvFile();
 
@@ -15,6 +27,7 @@ const OPENAI_PROJECT = process.env.OPENAI_PROJECT || "";
 const SITE_URL = process.env.SITE_URL || "https://gpt.music-book.me";
 const SITE_NAME = process.env.SITE_NAME || "Music Book GPT";
 const CONSOLE_PASSWORD = process.env.CONSOLE_PASSWORD || "";
+const TILDA_WEBHOOK_SECRET = process.env.TILDA_WEBHOOK_SECRET || "";
 const SYSTEM_PROMPT =
   process.env.SYSTEM_PROMPT ||
   [
@@ -298,7 +311,33 @@ function parseRequestBody(req) {
     });
     req.on("end", () => {
       try {
-        resolve(raw ? JSON.parse(raw) : {});
+        if (!raw) {
+          resolve({});
+          return;
+        }
+
+        const contentType = String(req.headers["content-type"] || "").toLowerCase();
+        if (contentType.includes("application/json")) {
+          resolve(JSON.parse(raw));
+          return;
+        }
+
+        if (contentType.includes("application/x-www-form-urlencoded")) {
+          const params = new URLSearchParams(raw);
+          const payload = {};
+          for (const [key, value] of params.entries()) {
+            if (Object.prototype.hasOwnProperty.call(payload, key)) {
+              const existing = payload[key];
+              payload[key] = Array.isArray(existing) ? [...existing, value] : [existing, value];
+            } else {
+              payload[key] = value;
+            }
+          }
+          resolve(payload);
+          return;
+        }
+
+        resolve(JSON.parse(raw));
       } catch (error) {
         reject(new Error("Invalid JSON body."));
       }
@@ -510,9 +549,34 @@ function requireConsoleAuth(req, res) {
   return true;
 }
 
+function verifyTildaWebhookSecret(req, payload) {
+  if (!TILDA_WEBHOOK_SECRET) {
+    return true;
+  }
+
+  const querySecret = normalizeLooseText(new URL(req.url, `http://${req.headers.host || "localhost"}`).searchParams.get("secret"));
+  const headerSecret = normalizeLooseText(req.headers["x-tilda-secret"]);
+  const bodySecret = normalizeLooseText(payload.secret || payload.webhook_secret || payload.token);
+  return [querySecret, headerSecret, bodySecret].some((value) => value && value === TILDA_WEBHOOK_SECRET);
+}
+
 function latestUserMessage(messages) {
   const reversed = [...messages].reverse();
   return reversed.find((message) => message.role === "user")?.content || "";
+}
+
+function getOrderAssistantReply(message) {
+  const text = normalizeSearchText(message);
+  if (!isOrderQuestion(text)) {
+    return "";
+  }
+
+  const criteria = extractOrderLookupCriteria(text);
+  if (!criteria.phone && !criteria.trackNumber && !criteria.textCandidate) {
+    return "Я могу помочь найти заказ. Для этого лучше указать телефон, трек-номер или полные ФИО вместе с адресом доставки.";
+  }
+
+  return formatOrderReply(findMatchingOrders(criteria), criteria);
 }
 
 function getDirectAssistantReply(message) {
@@ -898,6 +962,25 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (req.method === "POST" && url.pathname === "/api/tilda/webhook") {
+    try {
+      const body = await parseRequestBody(req);
+      if (!verifyTildaWebhookSecret(req, body)) {
+        sendJson(res, 401, { error: "Invalid Tilda webhook secret." });
+        return;
+      }
+
+      const incomingOrder = inferOrderFromPayload(body);
+      const existingOrder = loadOrder(incomingOrder.id);
+      const order = saveOrder(mergeOrders(existingOrder, incomingOrder));
+
+      sendJson(res, 200, { ok: true, orderId: order.id });
+    } catch (error) {
+      sendJson(res, 500, { error: error.message || "Could not process Tilda webhook." });
+    }
+    return;
+  }
+
   if (req.method === "GET" && url.pathname === "/api/conversations") {
     try {
       const searchText = typeof url.searchParams.get("search") === "string" ? url.searchParams.get("search").trim() : "";
@@ -993,7 +1076,8 @@ const server = http.createServer(async (req, res) => {
       conversation.messages.push({ role: "user", content: message });
       updateConversationTitle(conversation);
 
-      const directReply = getDirectAssistantReply(message);
+      const orderReply = getOrderAssistantReply(message);
+      const directReply = orderReply || getDirectAssistantReply(message);
       const reply = directReply || (await createOpenAIResponse(conversation.messages, conversation.modelOverride || OPENAI_MODEL));
       conversation.messages.push({ role: "assistant", content: reply });
       const saved = saveConversation(conversation);

@@ -4,6 +4,7 @@
   "private": true,
   "description": "Minimal GPT-powered site for music-book.me",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "import:tilda-orders": "node scripts/import-tilda-orders.js"
   }
 }
