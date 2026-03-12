@@ -525,7 +525,10 @@ function getDirectAssistantReply(message) {
   const asksAboutAirat = /(айрат)/.test(text);
   const asksAboutOfficeHours = /(до скольки|режим работы|время работы|часы работы|когда работает|когда открыт|открыт ли|офис|магазин|самовывоз|адрес)/.test(text);
   const asksAboutRomanaGrandmother = /(кто\s+бабушк|бабушка\s+роман|бабушку\s+роман)/.test(text);
-  const asksAboutRomanaGrandfather = /(кто\s+дедушк|дедушка\s+роман|дедушку\s+роман)/.test(text);
+  const asksAboutRomanaGrandfather = /(кто\s+дед|кто\s+дедушк|дед\s+роман|дедушка\s+роман|дедушку\s+роман)/.test(text);
+  const asksAboutRomanaBrother =
+    /(брат\s+роман|брат\s+у\s+роман|у\s+роман\s+есть\s+брат|есть\s+ли\s+у\s+роман\s+брат|кто\s+брат\s+роман)/.test(text) ||
+    /^(а\s+)?брат\s+есть\??$/.test(text);
 
   if (asksAboutRomanaSocials) {
     return [
@@ -552,6 +555,10 @@ function getDirectAssistantReply(message) {
 
   if (asksAboutRomanaGrandfather) {
     return "Дедушка Романы по линии мамы — Иван Павлович Ладыженко.";
+  }
+
+  if (asksAboutRomanaBrother) {
+    return "Да, у Романы есть родной брат — Родион Калимуллин.";
   }
 
   if (asksAboutAmira) {
