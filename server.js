@@ -399,11 +399,31 @@ function saveConversation(conversation) {
   return payload;
 }
 
-function listConversations() {
+function conversationContainsText(conversation, searchText) {
+  const normalizedSearch = String(searchText || "").trim().toLowerCase();
+  if (!normalizedSearch) {
+    return true;
+  }
+
+  const haystack = [
+    conversation.id,
+    conversation.title,
+    conversation.modelOverride,
+    ...(Array.isArray(conversation.messages) ? conversation.messages.map((message) => message.content || "") : [])
+  ]
+    .filter(Boolean)
+    .join("\n")
+    .toLowerCase();
+
+  return haystack.includes(normalizedSearch);
+}
+
+function listConversations(searchText = "") {
   const entries = fs
     .readdirSync(CONVERSATIONS_DIR, { withFileTypes: true })
     .filter((entry) => entry.isFile() && entry.name.endsWith(".json"))
     .map((entry) => loadConversation(path.basename(entry.name, ".json")))
+    .filter((conversation) => conversationContainsText(conversation, searchText))
     .filter(Boolean)
     .sort((left, right) => {
       const leftTime = Date.parse(left.updatedAt || left.createdAt || 0) || 0;
@@ -779,7 +799,8 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === "GET" && url.pathname === "/api/conversations") {
     try {
-      sendJson(res, 200, { conversations: listConversations() });
+      const searchText = typeof url.searchParams.get("search") === "string" ? url.searchParams.get("search").trim() : "";
+      sendJson(res, 200, { conversations: listConversations(searchText) });
     } catch (error) {
       sendJson(res, 500, { error: error.message || "Could not list conversations." });
     }

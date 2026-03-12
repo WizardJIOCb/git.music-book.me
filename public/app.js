@@ -310,8 +310,13 @@ async function loadConversation(conversationId) {
   return data;
 }
 
-async function listConversations() {
-  const response = await fetch("/api/conversations");
+async function listConversations(options = {}) {
+  const url = new URL("/api/conversations", window.location.origin);
+  if (typeof options.search === "string" && options.search.trim()) {
+    url.searchParams.set("search", options.search.trim());
+  }
+
+  const response = await fetch(url);
   const data = await response.json();
   if (!response.ok) {
     throw new Error(data.error || "Не удалось получить список диалогов");
@@ -488,7 +493,7 @@ async function runCommand(rawCommand) {
   if (command === "help") {
     addConsoleLine(
       "system",
-      "help | history | history clear | dialogs | dialogs last | dialogs last <число> | dialogs first | dialogs first <число> | dialogs all | dialogs <число> | dialogs <поиск> | load <id> | rename <current|id> <новое имя> | delete <current|id> | model | model <id> | share | new | clear | test <текст> | ping"
+      "help | history | history clear | dialogs | dialogs last | dialogs last <число> | dialogs first | dialogs first <число> | dialogs all | dialogs <число> | dialogs <поиск> | dialogs \"<фраза>\" | load <id> | rename <current|id> <новое имя> | delete <current|id> | model | model <id> | share | new | clear | test <текст> | ping"
     );
     return;
   }
@@ -518,12 +523,19 @@ async function runCommand(rawCommand) {
     const rawArgument = command === "dialogs" ? "" : command.slice(8).trim();
     const normalizedArgument = rawArgument.toLowerCase();
     const argumentParts = rawArgument.split(/\s+/).filter(Boolean);
+    const quotedSearchMatch = rawArgument.match(/^"(.*)"$/);
     let query = "";
+    let contentSearch = "";
     let dialogsToShow = 12;
     let pickMode = "last";
     let modeLabel = `последние ${dialogsToShow}`;
 
-    if (!rawArgument || normalizedArgument === "last") {
+    if (quotedSearchMatch) {
+      contentSearch = quotedSearchMatch[1].trim();
+      pickMode = "all";
+      dialogsToShow = Infinity;
+      modeLabel = "все";
+    } else if (!rawArgument || normalizedArgument === "last") {
       dialogsToShow = 12;
       modeLabel = `последние ${dialogsToShow}`;
     } else if (argumentParts.length === 2 && argumentParts[0].toLowerCase() === "last" && /^\d+$/.test(argumentParts[1])) {
@@ -550,7 +562,7 @@ async function runCommand(rawCommand) {
       query = normalizedArgument;
     }
 
-    const conversations = await listConversations();
+    const conversations = await listConversations({ search: contentSearch });
     const filtered = query
       ? conversations.filter((conversation) => {
           const haystack = [
@@ -568,7 +580,11 @@ async function runCommand(rawCommand) {
       : conversations;
 
     if (!filtered.length) {
-      addConsoleLine("system", query ? `Диалоги по запросу "${query}" не найдены.` : "Сохранённых диалогов пока нет.");
+      if (contentSearch) {
+        addConsoleLine("system", `Диалоги с фразой "${contentSearch}" не найдены.`);
+      } else {
+        addConsoleLine("system", query ? `Диалоги по запросу "${query}" не найдены.` : "Сохранённых диалогов пока нет.");
+      }
       return;
     }
 
@@ -577,7 +593,9 @@ async function runCommand(rawCommand) {
 
     addConsoleLine(
       "system",
-      `Найдено диалогов: ${filtered.length}. Показываю ${modeLabel === "все" ? "все" : modeLabel.replace(String(dialogsToShow), String(Math.min(filtered.length, dialogsToShow)))}.`
+      contentSearch
+        ? `Найдено диалогов с фразой "${contentSearch}": ${filtered.length}.`
+        : `Найдено диалогов: ${filtered.length}. Показываю ${modeLabel === "все" ? "все" : modeLabel.replace(String(dialogsToShow), String(Math.min(filtered.length, dialogsToShow)))}.`
     );
     for (const conversation of visibleConversations) {
       const model = conversation.modelOverride || "default";
