@@ -16,10 +16,81 @@ const consoleLineTemplateEl = document.getElementById("console-line-template");
 
 const storageKey = "music-book-current-conversation";
 const consoleTokenKey = "music-book-console-token";
+const consoleHistoryKey = "music-book-console-history";
+const maxConsoleHistoryEntries = 100;
 let currentConversation = null;
 let isPending = false;
 let consoleLocked = false;
 let consoleToken = sessionStorage.getItem(consoleTokenKey) || "";
+let consoleHistory = loadConsoleHistory();
+let consoleHistoryIndex = consoleHistory.length;
+let consoleDraftValue = "";
+
+function loadConsoleHistory() {
+  try {
+    const raw = localStorage.getItem(consoleHistoryKey);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.filter((item) => typeof item === "string" && item.trim()) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveConsoleHistory() {
+  localStorage.setItem(consoleHistoryKey, JSON.stringify(consoleHistory));
+}
+
+function resetConsoleHistoryNavigation() {
+  consoleHistoryIndex = consoleHistory.length;
+  consoleDraftValue = "";
+}
+
+function rememberConsoleCommand(command) {
+  if (!command) {
+    return;
+  }
+
+  const lastCommand = consoleHistory[consoleHistory.length - 1];
+  if (lastCommand !== command) {
+    consoleHistory.push(command);
+    if (consoleHistory.length > maxConsoleHistoryEntries) {
+      consoleHistory = consoleHistory.slice(-maxConsoleHistoryEntries);
+    }
+    saveConsoleHistory();
+  }
+
+  resetConsoleHistoryNavigation();
+}
+
+function clearConsoleHistory() {
+  consoleHistory = [];
+  saveConsoleHistory();
+  resetConsoleHistoryNavigation();
+}
+
+function applyConsoleHistory(step) {
+  if (!consoleHistory.length) {
+    return;
+  }
+
+  if (consoleHistoryIndex === consoleHistory.length) {
+    consoleDraftValue = consoleInputEl.value;
+  }
+
+  if (step < 0) {
+    consoleHistoryIndex = Math.max(0, consoleHistoryIndex - 1);
+    consoleInputEl.value = consoleHistory[consoleHistoryIndex] || "";
+    return;
+  }
+
+  consoleHistoryIndex = Math.min(consoleHistory.length, consoleHistoryIndex + 1);
+  if (consoleHistoryIndex === consoleHistory.length) {
+    consoleInputEl.value = consoleDraftValue;
+    return;
+  }
+
+  consoleInputEl.value = consoleHistory[consoleHistoryIndex] || "";
+}
 
 function escapeHtml(value) {
   return value
@@ -184,6 +255,7 @@ function addConsoleLine(label, text) {
 function openConsole() {
   commandConsoleEl.classList.remove("hidden");
   commandConsoleEl.setAttribute("aria-hidden", "false");
+  resetConsoleHistoryNavigation();
   focusWithoutScroll(consoleInputEl);
 }
 
@@ -395,6 +467,7 @@ async function runCommand(rawCommand) {
     return;
   }
 
+  rememberConsoleCommand(command);
   addConsoleLine("~", command);
 
   if (consoleLocked && !command.startsWith("unlock ")) {
@@ -415,8 +488,29 @@ async function runCommand(rawCommand) {
   if (command === "help") {
     addConsoleLine(
       "system",
-      "help | dialogs | dialogs <поиск> | load <id> | rename <current|id> <новое имя> | delete <current|id> | model | model <id> | share | new | clear | test <текст> | ping"
+      "help | history | history clear | dialogs | dialogs <поиск> | load <id> | rename <current|id> <новое имя> | delete <current|id> | model | model <id> | share | new | clear | test <текст> | ping"
     );
+    return;
+  }
+
+  if (command === "history") {
+    if (!consoleHistory.length) {
+      addConsoleLine("system", "История команд пока пуста.");
+      return;
+    }
+
+    addConsoleLine("system", `История команд: ${consoleHistory.length}. Показываю последние ${Math.min(consoleHistory.length, 20)}.`);
+    const entries = consoleHistory.slice(-20);
+    entries.forEach((entry, index) => {
+      const number = consoleHistory.length - entries.length + index + 1;
+      addConsoleLine("history", `${number}. ${entry}`);
+    });
+    return;
+  }
+
+  if (command === "history clear") {
+    clearConsoleHistory();
+    addConsoleLine("system", "История команд очищена.");
     return;
   }
 
@@ -618,10 +712,24 @@ consoleFormEl.addEventListener("submit", async (event) => {
   event.preventDefault();
   const command = consoleInputEl.value;
   consoleInputEl.value = "";
+  resetConsoleHistoryNavigation();
   try {
     await runCommand(command);
   } catch (error) {
     addConsoleLine("system", `Ошибка: ${error.message}`);
+  }
+});
+
+consoleInputEl.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowUp") {
+    event.preventDefault();
+    applyConsoleHistory(-1);
+    return;
+  }
+
+  if (event.key === "ArrowDown") {
+    event.preventDefault();
+    applyConsoleHistory(1);
   }
 });
 
