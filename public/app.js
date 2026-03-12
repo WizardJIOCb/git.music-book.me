@@ -167,10 +167,12 @@ function smoothScrollToLatestMessage() {
   window.requestAnimationFrame(() => {
     window.requestAnimationFrame(() => {
       scrollMessagesToBottom("smooth");
+      formEl?.scrollIntoView({ behavior: "smooth", block: "end" });
     });
   });
   window.setTimeout(() => {
     scrollMessagesToBottom("smooth");
+    formEl?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, 180);
 }
 
