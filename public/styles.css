@@ -18,6 +18,7 @@
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
   font-family: "Manrope", sans-serif;
   color: var(--text);
   background:
@@ -30,6 +31,8 @@ body {
   width: min(1120px, calc(100% - 32px));
   margin: 0 auto;
   padding: 40px 0 56px;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .hero {
@@ -37,11 +40,16 @@ body {
 }
 
 .eyebrow {
-  margin: 0 0 10px;
+  margin: 0;
   font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.2em;
   text-transform: uppercase;
+}
+
+.eyebrow--under-title {
+  margin-top: 10px;
+  font-size: 0.72rem;
 }
 
 .eyebrow a {
@@ -465,6 +473,8 @@ button:disabled,
     width: min(100% - 16px, 1120px);
     padding-top: 16px;
     padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    flex-direction: column;
   }
 
   .hero {
@@ -473,9 +483,15 @@ button:disabled,
   }
 
   h1 {
-    font-size: clamp(1.8rem, 8.4vw, 2.7rem);
+    font-size: clamp(1.55rem, 7.2vw, 2.2rem);
     max-width: none;
     white-space: nowrap;
+    letter-spacing: -0.04em;
+  }
+
+  .eyebrow--under-title {
+    margin-top: 8px;
+    font-size: 0.66rem;
   }
 
   .hero-description-toggle {
@@ -509,7 +525,8 @@ button:disabled,
 
   .panel {
     border-radius: 24px;
-    min-height: calc(100vh - 190px - env(safe-area-inset-bottom, 0px));
+    min-height: calc(100dvh - 156px - env(safe-area-inset-bottom, 0px));
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
   }
@@ -614,20 +631,27 @@ button:disabled,
     scroll-snap-type: x proximity;
     gap: 8px;
     padding-top: 12px;
-    padding-inline: 20px;
+    padding-inline: 16px;
     padding-bottom: 4px;
+    scroll-padding-inline: 16px;
     -webkit-overflow-scrolling: touch;
+  }
+
+  .suggestions::before,
+  .suggestions::after {
+    content: "";
+    flex: 0 0 4px;
   }
 
   .suggestion {
     flex: 0 0 auto;
     width: fit-content;
     min-height: 42px;
-    max-width: 66vw;
+    max-width: 58vw;
     text-align: left;
     scroll-snap-align: start;
-    padding: 8px 12px;
-    font-size: 0.92rem;
+    padding: 8px 11px;
+    font-size: 0.88rem;
     white-space: normal;
     line-height: 1.35;
   }
@@ -645,10 +669,10 @@ button:disabled,
 
   .messages {
     flex: 1 1 auto;
-    min-height: 420px;
+    min-height: 0;
     max-height: none;
     padding-top: 18px;
-    padding-bottom: 24px;
+    padding-bottom: 16px;
   }
 
   .message {
@@ -668,7 +692,7 @@ button:disabled,
     z-index: 6;
     margin-top: auto;
     padding-top: 14px;
-    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
     background: linear-gradient(180deg, rgba(255, 252, 246, 0.82), rgba(255, 250, 240, 0.98) 18%);
     backdrop-filter: blur(16px);
   }
