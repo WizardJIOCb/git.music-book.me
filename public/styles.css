@@ -30,7 +30,7 @@ body {
 .shell {
   width: min(1120px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 40px 0 56px;
+  padding: 0px 0 56px;
   min-height: 100vh;
   min-height: 100dvh;
 }
