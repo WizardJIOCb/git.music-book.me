@@ -488,7 +488,7 @@ async function runCommand(rawCommand) {
   if (command === "help") {
     addConsoleLine(
       "system",
-      "help | history | history clear | dialogs | dialogs last | dialogs first | dialogs all | dialogs <число> | dialogs <поиск> | load <id> | rename <current|id> <новое имя> | delete <current|id> | model | model <id> | share | new | clear | test <текст> | ping"
+      "help | history | history clear | dialogs | dialogs last | dialogs last <число> | dialogs first | dialogs first <число> | dialogs all | dialogs <число> | dialogs <поиск> | load <id> | rename <current|id> <новое имя> | delete <current|id> | model | model <id> | share | new | clear | test <текст> | ping"
     );
     return;
   }
@@ -517,21 +517,34 @@ async function runCommand(rawCommand) {
   if (command === "dialogs" || command.startsWith("dialogs ")) {
     const rawArgument = command === "dialogs" ? "" : command.slice(8).trim();
     const normalizedArgument = rawArgument.toLowerCase();
+    const argumentParts = rawArgument.split(/\s+/).filter(Boolean);
     let query = "";
     let dialogsToShow = 12;
+    let pickMode = "last";
     let modeLabel = `последние ${dialogsToShow}`;
 
     if (!rawArgument || normalizedArgument === "last") {
       dialogsToShow = 12;
       modeLabel = `последние ${dialogsToShow}`;
+    } else if (argumentParts.length === 2 && argumentParts[0].toLowerCase() === "last" && /^\d+$/.test(argumentParts[1])) {
+      dialogsToShow = Math.max(1, Number.parseInt(argumentParts[1], 10));
+      pickMode = "last";
+      modeLabel = `последние ${dialogsToShow}`;
     } else if (normalizedArgument === "first") {
       dialogsToShow = 12;
+      pickMode = "first";
+      modeLabel = `первые ${dialogsToShow}`;
+    } else if (argumentParts.length === 2 && argumentParts[0].toLowerCase() === "first" && /^\d+$/.test(argumentParts[1])) {
+      dialogsToShow = Math.max(1, Number.parseInt(argumentParts[1], 10));
+      pickMode = "first";
       modeLabel = `первые ${dialogsToShow}`;
     } else if (normalizedArgument === "all") {
       dialogsToShow = Infinity;
+      pickMode = "all";
       modeLabel = "все";
     } else if (/^\d+$/.test(rawArgument)) {
       dialogsToShow = Math.max(1, Number.parseInt(rawArgument, 10));
+      pickMode = "last";
       modeLabel = `последние ${dialogsToShow}`;
     } else {
       query = normalizedArgument;
@@ -560,7 +573,7 @@ async function runCommand(rawCommand) {
     }
 
     const visibleConversations =
-      normalizedArgument === "first" ? filtered.slice(0, dialogsToShow) : filtered.slice(-dialogsToShow);
+      pickMode === "first" ? filtered.slice(0, dialogsToShow) : pickMode === "all" ? filtered : filtered.slice(-dialogsToShow);
 
     addConsoleLine(
       "system",
