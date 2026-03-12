@@ -37,6 +37,7 @@ const SYSTEM_PROMPT =
     "If the answer depends on a fact not present in the provided store facts, say that directly instead of inventing details.",
     "If the visitor asks where to buy a book or asks about a specific book, always give the direct page link from the provided facts when available.",
     "If the visitor asks about a specific book from the catalog, first describe that exact book using the provided book description facts, then mention price or availability if known, and then give the direct page link.",
+    "If the visitor asks a broad catalog question like which books are available on the site, list the books and include the direct page link for each book.",
     "Do not replace a specific book description with generic text about the store or project when the book facts are available.",
     "If the visitor asks about prices, use only the prices explicitly present in the provided facts. If a price is not confirmed, say that the exact current price is better checked on the book page.",
     "If the visitor asks about delivery to a Russian city outside Moscow or Saint Petersburg, use the provided Russia delivery facts directly: usually 2 to 7 days, cost from 180 RUB, and the exact term depends on the chosen method and is shown in the cart. Do not answer that the delivery time is unknown when these facts are available.",
@@ -835,7 +836,8 @@ function getRelevantStoreFacts(userText) {
   if (asksAboutBooks) {
     const booksToDescribe = matchedBooks.length ? matchedBooks : STORE_FACTS.books;
     const lines = booksToDescribe.map((book) => {
-      const parts = [`${book.title}: ${book.url}`];
+      const parts = [`${book.title}`];
+      parts.push(`ссылка: ${book.url}`);
       if (book.description) {
         parts.push(`описание: ${book.description}`);
       }
