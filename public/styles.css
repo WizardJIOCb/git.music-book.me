@@ -412,6 +412,7 @@ button:disabled,
 
   .hero {
     padding: 16px 2px 18px;
+    padding-right: 74px;
   }
 
   h1 {
@@ -451,14 +452,12 @@ button:disabled,
     line-height: 1.55;
   }
 
-  .panel-head,
   .composer-bar {
     flex-direction: column;
     align-items: flex-start;
   }
 
   .messages,
-  .panel-head,
   .composer,
   .suggestions {
     padding-inline: 16px;
@@ -468,21 +467,6 @@ button:disabled,
     border-radius: 24px;
   }
 
-  .panel-head {
-    gap: 14px;
-    padding-top: 18px;
-    padding-bottom: 14px;
-    align-items: center;
-  }
-
-  .panel-actions {
-    width: 100%;
-    display: grid;
-    grid-template-columns: auto;
-    justify-content: end;
-    gap: 10px;
-  }
-
   button,
   .ghost-button,
   .conversation-meta {
@@ -490,11 +474,7 @@ button:disabled,
     min-height: 48px;
   }
 
-  .panel-actions > .ghost-button:not(.panel-menu-toggle) {
-    display: none;
-  }
-
-  .panel-head-copy {
+  .panel-head {
     display: none;
   }
 
@@ -502,10 +482,15 @@ button:disabled,
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    position: fixed;
+    top: calc(12px + env(safe-area-inset-top, 0px));
+    right: 16px;
     width: 52px;
     min-width: 52px;
     padding: 0;
     border-radius: 16px;
+    z-index: 18;
+    box-shadow: 0 14px 30px rgba(76, 39, 16, 0.14);
   }
 
   .panel-menu-toggle__label {
