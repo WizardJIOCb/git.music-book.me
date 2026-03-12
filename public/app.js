@@ -162,9 +162,15 @@ function scrollMessagesToBottom(behavior = "auto") {
   });
 }
 
-function smoothScrollToLatestReply() {
+function smoothScrollToLatestMessage() {
   window.requestAnimationFrame(() => {
     window.requestAnimationFrame(() => {
+      const latestMessageEl = messagesEl?.lastElementChild;
+      if (latestMessageEl instanceof HTMLElement) {
+        latestMessageEl.scrollIntoView({ behavior: "smooth", block: "end" });
+        return;
+      }
+
       scrollMessagesToBottom("smooth");
     });
   });
@@ -218,13 +224,17 @@ function renderAssistantContent(content) {
   return parts.join("") || `<p>${escaped}</p>`;
 }
 
-function addMessage(role, content) {
+function addMessage(role, content, options = {}) {
   const fragment = templateEl.content.cloneNode(true);
   const messageEl = fragment.querySelector(".message");
   const roleEl = fragment.querySelector(".role");
   const bubbleEl = fragment.querySelector(".bubble");
+  const shouldAnimate = Boolean(options.animateEntrance);
 
   messageEl.dataset.role = role;
+  if (shouldAnimate) {
+    messageEl.classList.add("message--enter");
+  }
   roleEl.textContent = role === "assistant" ? "Music Book GPT" : "Вы";
   if (role === "assistant") {
     bubbleEl.innerHTML = renderAssistantContent(content);
@@ -233,21 +243,30 @@ function addMessage(role, content) {
   }
 
   messagesEl.appendChild(fragment);
+  if (shouldAnimate) {
+    window.requestAnimationFrame(() => {
+      messageEl.classList.remove("message--enter");
+    });
+  }
   scrollMessagesToBottom(role === "assistant" ? "smooth" : "auto");
 }
 
-function renderConversation(conversation) {
+function renderConversation(conversation, options = {}) {
   messagesEl.innerHTML = "";
   currentConversation = conversation;
+  const messages = Array.isArray(conversation?.messages) ? conversation.messages : [];
 
-  if (!conversation || !Array.isArray(conversation.messages) || !conversation.messages.length) {
+  if (!conversation || !messages.length) {
     addMessage(
       "assistant",
       "Привет! Это чат-помощник music-book.me. Здесь можно спросить о книгах, ссылках на страницы книг, покупке, ценах, доставке, самовывозе, Романе и о самом проекте."
     );
   } else {
-    for (const message of conversation.messages) {
-      addMessage(message.role, message.content);
+    const lastMessageIndex = messages.length - 1;
+    for (const [index, message] of messages.entries()) {
+      addMessage(message.role, message.content, {
+        animateEntrance: Boolean(options.animateLatestAssistant) && index === lastMessageIndex && message.role === "assistant"
+      });
     }
   }
 
@@ -571,15 +590,16 @@ async function submitPrompt(prompt) {
 
     currentConversation = data.conversation;
     updateUrlForConversation(currentConversation.id);
-    renderConversation(currentConversation);
+    renderConversation(currentConversation, { animateLatestAssistant: true });
     promptEl.value = "";
-    smoothScrollToLatestReply();
+    smoothScrollToLatestMessage();
   } catch (error) {
     addMessage(
       "assistant",
-      `Пока не получилось получить ответ: ${error.message}. Попробуй переформулировать вопрос чуть короче.`
+      `Пока не получилось получить ответ: ${error.message}. Попробуй переформулировать вопрос чуть короче.`,
+      { animateEntrance: true }
     );
-    smoothScrollToLatestReply();
+    smoothScrollToLatestMessage();
   } finally {
     setPending(false);
     focusWithoutScroll(promptEl);

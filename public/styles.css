@@ -258,6 +258,17 @@ h1 {
   max-width: min(760px, 100%);
 }
 
+.message--enter {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.message:not(.message--enter) {
+  transition:
+    opacity 320ms ease,
+    transform 320ms ease;
+}
+
 .message[data-role="user"] {
   align-self: flex-end;
 }
