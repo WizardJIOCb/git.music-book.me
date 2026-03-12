@@ -7,6 +7,7 @@ const suggestionsEl = document.getElementById("suggestions");
 const shareButtonEl = document.getElementById("share-button");
 const newChatButtonEl = document.getElementById("new-chat-button");
 const conversationMetaEl = document.getElementById("conversation-meta");
+const consoleTriggerTitleEl = document.getElementById("console-trigger-title");
 const commandConsoleEl = document.getElementById("command-console");
 const consoleBackdropEl = document.getElementById("console-backdrop");
 const consoleFormEl = document.getElementById("console-form");
@@ -18,6 +19,8 @@ const storageKey = "music-book-current-conversation";
 const consoleTokenKey = "music-book-console-token";
 const consoleHistoryKey = "music-book-console-history";
 const maxConsoleHistoryEntries = 100;
+const consoleTapThresholdMs = 4500;
+const consoleTapCountToOpen = 10;
 let currentConversation = null;
 let isPending = false;
 let consoleLocked = false;
@@ -25,6 +28,8 @@ let consoleToken = sessionStorage.getItem(consoleTokenKey) || "";
 let consoleHistory = loadConsoleHistory();
 let consoleHistoryIndex = consoleHistory.length;
 let consoleDraftValue = "";
+let consoleTapCount = 0;
+let consoleTapStartedAt = 0;
 
 function loadConsoleHistory() {
   try {
@@ -90,6 +95,26 @@ function applyConsoleHistory(step) {
   }
 
   consoleInputEl.value = consoleHistory[consoleHistoryIndex] || "";
+}
+
+function registerConsoleTriggerTap() {
+  const now = Date.now();
+  if (!consoleTapStartedAt || now - consoleTapStartedAt > consoleTapThresholdMs) {
+    consoleTapStartedAt = now;
+    consoleTapCount = 0;
+  }
+
+  consoleTapCount += 1;
+
+  if (consoleTapCount >= consoleTapCountToOpen) {
+    consoleTapCount = 0;
+    consoleTapStartedAt = 0;
+    if (commandConsoleEl.classList.contains("hidden")) {
+      openConsole();
+    } else {
+      closeConsole();
+    }
+  }
 }
 
 function escapeHtml(value) {
@@ -789,6 +814,10 @@ consoleInputEl.addEventListener("keydown", (event) => {
     event.preventDefault();
     applyConsoleHistory(1);
   }
+});
+
+consoleTriggerTitleEl?.addEventListener("click", () => {
+  registerConsoleTriggerTap();
 });
 
 window.addEventListener("keydown", (event) => {
