@@ -288,7 +288,11 @@ function renderConversation(conversation, options = {}) {
 function updateConversationMeta() {
   let text = "Диалог ещё не сохранён";
   if (!currentConversation || !currentConversation.id) {
-    conversationMetaEl.textContent = text;
+    if (conversationMetaEl) {
+      conversationMetaEl.textContent = text;
+      conversationMetaEl.hidden = true;
+      conversationMetaEl.style.display = "none";
+    }
     if (actionsMenuMetaEl) {
       actionsMenuMetaEl.textContent = text;
     }
@@ -298,7 +302,11 @@ function updateConversationMeta() {
   const title = currentConversation.title || "Диалог";
   const count = currentConversation.messageCount ?? currentConversation.messages?.length ?? 0;
   text = `${title} • ${count} сообщений`;
-  conversationMetaEl.textContent = text;
+  if (conversationMetaEl) {
+    conversationMetaEl.textContent = text;
+    conversationMetaEl.hidden = true;
+    conversationMetaEl.style.display = "none";
+  }
   if (actionsMenuMetaEl) {
     actionsMenuMetaEl.textContent = text;
   }
