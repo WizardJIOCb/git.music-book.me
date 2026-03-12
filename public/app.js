@@ -12,10 +12,14 @@ const actionsMenuButtonEl = document.getElementById("actions-menu-button");
 const actionsMenuBackdropEl = document.getElementById("actions-menu-backdrop");
 const actionsMenuEl = document.getElementById("actions-menu");
 const actionsMenuCloseButtonEl = document.getElementById("actions-menu-close-button");
+const menuAboutButtonEl = document.getElementById("menu-about-button");
 const menuShareButtonEl = document.getElementById("menu-share-button");
 const menuNewChatButtonEl = document.getElementById("menu-new-chat-button");
 const conversationMetaEl = document.getElementById("conversation-meta");
 const actionsMenuMetaEl = document.getElementById("actions-menu-meta");
+const infoPopupEl = document.getElementById("info-popup");
+const infoPopupBackdropEl = document.getElementById("info-popup-backdrop");
+const infoPopupCloseButtonEl = document.getElementById("info-popup-close-button");
 const consoleTriggerTitleEl = document.getElementById("console-trigger-title");
 const commandConsoleEl = document.getElementById("command-console");
 const consoleBackdropEl = document.getElementById("console-backdrop");
@@ -351,6 +355,17 @@ function toggleHeroDescription() {
   const isOpen = heroDescriptionContentEl.classList.contains("is-open");
   heroDescriptionContentEl.classList.toggle("is-open", !isOpen);
   heroDescriptionToggleEl.setAttribute("aria-expanded", String(!isOpen));
+}
+
+function openInfoPopup() {
+  infoPopupEl?.classList.remove("hidden");
+  infoPopupEl?.setAttribute("aria-hidden", "false");
+  closeActionsMenu();
+}
+
+function closeInfoPopup() {
+  infoPopupEl?.classList.add("hidden");
+  infoPopupEl?.setAttribute("aria-hidden", "true");
 }
 
 async function copyShareLink() {
@@ -859,6 +874,7 @@ actionsMenuButtonEl?.addEventListener("click", toggleActionsMenu);
 actionsMenuCloseButtonEl?.addEventListener("click", closeActionsMenu);
 actionsMenuBackdropEl?.addEventListener("click", closeActionsMenu);
 menuNewChatButtonEl?.addEventListener("click", startNewChat);
+menuAboutButtonEl?.addEventListener("click", openInfoPopup);
 menuShareButtonEl?.addEventListener("click", async () => {
   try {
     await copyShareLink();
@@ -867,6 +883,8 @@ menuShareButtonEl?.addEventListener("click", async () => {
     addConsoleLine("system", `Не удалось скопировать ссылку: ${error.message}`);
   }
 });
+infoPopupBackdropEl?.addEventListener("click", closeInfoPopup);
+infoPopupCloseButtonEl?.addEventListener("click", closeInfoPopup);
 
 consoleBackdropEl.addEventListener("click", closeConsole);
 
@@ -932,6 +950,11 @@ window.addEventListener("keydown", (event) => {
 
   if (event.key === "Escape" && actionsMenuEl && !actionsMenuEl.classList.contains("hidden")) {
     closeActionsMenu();
+    return;
+  }
+
+  if (event.key === "Escape" && infoPopupEl && !infoPopupEl.classList.contains("hidden")) {
+    closeInfoPopup();
     return;
   }
 

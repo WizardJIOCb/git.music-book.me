@@ -53,6 +53,7 @@
                 <button type="button" class="ghost-button panel-menu__close" id="actions-menu-close-button">Закрыть</button>
               </div>
               <div class="conversation-meta panel-menu__meta" id="actions-menu-meta">Диалог ещё не сохранён</div>
+              <button type="button" class="ghost-button panel-menu__button" id="menu-about-button">О цифровом ассистенте</button>
               <button type="button" class="ghost-button panel-menu__button" id="menu-new-chat-button">Новый диалог</button>
               <button type="button" class="ghost-button panel-menu__button" id="menu-share-button">Поделиться</button>
             </aside>
@@ -96,6 +97,24 @@
           <span class="command-console__prompt">~</span>
           <input id="console-input" type="text" autocomplete="off" placeholder="Введите команду" />
         </form>
+      </div>
+    </section>
+
+    <section class="info-popup hidden" id="info-popup" aria-hidden="true">
+      <div class="info-popup__backdrop" id="info-popup-backdrop"></div>
+      <div class="info-popup__panel">
+        <div class="info-popup__head">
+          <p class="info-popup__title">О цифровом ассистенте</p>
+          <button type="button" class="ghost-button info-popup__close" id="info-popup-close-button">Закрыть</button>
+        </div>
+        <div class="info-popup__body">
+          <p>
+            Цифровой ассистент помогает познакомиться с проектом и книгами издательства Romana's book.
+          </p>
+          <p>
+            Он может рассказать о книгах, дать ссылку на страницу конкретной книги, подсказать по покупке, цене, доставке, самовывозу, рассказать кто такая Романа и помочь сориентироваться по сайту.
+          </p>
+        </div>
       </div>
     </section>
 

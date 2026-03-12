@@ -179,6 +179,63 @@ h1 {
   display: none;
 }
 
+.info-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+
+.info-popup.hidden {
+  display: none;
+}
+
+.info-popup__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 12, 8, 0.38);
+  backdrop-filter: blur(4px);
+}
+
+.info-popup__panel {
+  position: relative;
+  width: min(560px, calc(100% - 24px));
+  margin: 12vh auto 0;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgba(255, 250, 240, 0.98);
+  box-shadow: 0 28px 70px rgba(38, 21, 11, 0.18);
+  overflow: hidden;
+}
+
+.info-popup__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.info-popup__title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.info-popup__body {
+  padding: 18px 20px 22px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.info-popup__body p {
+  margin: 0;
+}
+
+.info-popup__body p + p {
+  margin-top: 12px;
+}
+
 .messages {
   display: flex;
   flex-direction: column;
@@ -422,21 +479,7 @@ button:disabled,
   }
 
   .hero-description-toggle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: auto;
-    min-height: 42px;
-    margin-top: 14px;
-    padding: 10px 14px;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.58);
-    color: var(--text);
-    font: inherit;
-    font-weight: 700;
-    cursor: pointer;
-    backdrop-filter: blur(10px);
+    display: none;
   }
 
   .hero-description-content {
@@ -571,7 +614,7 @@ button:disabled,
     scroll-snap-type: x proximity;
     gap: 8px;
     padding-top: 12px;
-    padding-inline: 16px;
+    padding-inline: 20px;
     padding-bottom: 4px;
     -webkit-overflow-scrolling: touch;
   }
@@ -580,13 +623,24 @@ button:disabled,
     flex: 0 0 auto;
     width: fit-content;
     min-height: 42px;
-    max-width: 72vw;
+    max-width: 66vw;
     text-align: left;
     scroll-snap-align: start;
     padding: 8px 12px;
     font-size: 0.92rem;
     white-space: normal;
     line-height: 1.35;
+  }
+
+  .info-popup__panel {
+    width: min(100% - 20px, 520px);
+    margin-top: 10vh;
+    border-radius: 22px;
+  }
+
+  .info-popup__head,
+  .info-popup__body {
+    padding-inline: 16px;
   }
 
   .messages {
