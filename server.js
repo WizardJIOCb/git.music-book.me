@@ -326,12 +326,7 @@ function parseRequestBody(req) {
           const params = new URLSearchParams(raw);
           const payload = {};
           for (const [key, value] of params.entries()) {
-            if (Object.prototype.hasOwnProperty.call(payload, key)) {
-              const existing = payload[key];
-              payload[key] = Array.isArray(existing) ? [...existing, value] : [existing, value];
-            } else {
-              payload[key] = value;
-            }
+            assignFormValue(payload, key, value);
           }
           resolve(payload);
           return;
@@ -344,6 +339,35 @@ function parseRequestBody(req) {
     });
     req.on("error", reject);
   });
+}
+
+function assignFormValue(target, key, value) {
+  const pathParts = String(key || "")
+    .replace(/\]/g, "")
+    .split("[")
+    .filter(Boolean);
+  const resolvedPath = pathParts.length ? pathParts : [key];
+  let cursor = target;
+
+  for (let index = 0; index < resolvedPath.length; index += 1) {
+    const part = resolvedPath[index];
+    const isLast = index === resolvedPath.length - 1;
+
+    if (isLast) {
+      if (Object.prototype.hasOwnProperty.call(cursor, part)) {
+        const existing = cursor[part];
+        cursor[part] = Array.isArray(existing) ? [...existing, value] : [existing, value];
+      } else {
+        cursor[part] = value;
+      }
+      return;
+    }
+
+    if (!cursor[part] || typeof cursor[part] !== "object" || Array.isArray(cursor[part])) {
+      cursor[part] = {};
+    }
+    cursor = cursor[part];
+  }
 }
 
 function normalizeMessages(input) {
