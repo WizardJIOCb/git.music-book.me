@@ -6,6 +6,7 @@ const templateEl = document.getElementById("message-template");
 const suggestionsEl = document.getElementById("suggestions");
 const shareButtonEl = document.getElementById("share-button");
 const newChatButtonEl = document.getElementById("new-chat-button");
+const shareFeedbackEl = document.getElementById("share-feedback");
 const heroDescriptionToggleEl = document.getElementById("hero-description-toggle");
 const heroDescriptionContentEl = document.getElementById("hero-description-content");
 const actionsMenuButtonEl = document.getElementById("actions-menu-button");
@@ -43,6 +44,7 @@ let consoleHistoryIndex = consoleHistory.length;
 let consoleDraftValue = "";
 let consoleTapCount = 0;
 let consoleTapStartedAt = 0;
+let shareFeedbackTimer = 0;
 
 function loadConsoleHistory() {
   try {
@@ -354,6 +356,23 @@ function addConsoleLine(label, text) {
   consoleLogEl.scrollTop = consoleLogEl.scrollHeight;
 }
 
+function showShareFeedback(message) {
+  if (!shareFeedbackEl) {
+    return;
+  }
+
+  shareFeedbackEl.textContent = message;
+  shareFeedbackEl.classList.remove("hidden");
+
+  if (shareFeedbackTimer) {
+    window.clearTimeout(shareFeedbackTimer);
+  }
+
+  shareFeedbackTimer = window.setTimeout(() => {
+    shareFeedbackEl.classList.add("hidden");
+  }, 1800);
+}
+
 function openConsole() {
   commandConsoleEl.classList.remove("hidden");
   commandConsoleEl.setAttribute("aria-hidden", "false");
@@ -418,12 +437,14 @@ function closeInfoPopup() {
 async function copyShareLink() {
   if (!currentConversation?.id) {
     addConsoleLine("system", "Сначала отправь хотя бы одно сообщение, чтобы появился share-link.");
+    showShareFeedback("Сначала отправьте сообщение");
     return;
   }
 
   const shareUrl = `${window.location.origin}${window.location.pathname}?c=${currentConversation.id}`;
   await navigator.clipboard.writeText(shareUrl);
   addConsoleLine("system", `Ссылка скопирована: ${shareUrl}`);
+  showShareFeedback("Ссылка скопирована");
 }
 
 function startNewChat() {

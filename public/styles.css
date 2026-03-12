@@ -138,6 +138,29 @@ h1 {
   position: relative;
 }
 
+.share-feedback {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 1px solid rgba(35, 24, 17, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 250, 240, 0.98);
+  box-shadow: 0 12px 28px rgba(38, 21, 11, 0.14);
+  color: var(--text);
+  font-size: 0.92rem;
+  white-space: nowrap;
+  z-index: 5;
+}
+
+.share-feedback.hidden {
+  display: none;
+}
+
 .ghost-button,
 .suggestion {
   border-radius: 999px;
@@ -735,4 +758,3 @@ button:disabled,
     gap: 2px;
   }
 }
-
