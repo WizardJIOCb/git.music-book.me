@@ -567,12 +567,14 @@ function latestUserMessage(messages) {
 
 function getOrderAssistantReply(message) {
   const text = normalizeSearchText(message);
-  if (!isOrderQuestion(text)) {
+  const criteria = extractOrderLookupCriteria(message);
+  const hasDirectLookup = Boolean(criteria.phone || criteria.trackNumber);
+
+  if (!isOrderQuestion(text) && !hasDirectLookup) {
     return "";
   }
 
-  const criteria = extractOrderLookupCriteria(text);
-  if (!criteria.phone && !criteria.trackNumber && !criteria.textCandidate) {
+  if (!criteria.phone && !criteria.trackNumber && !(criteria.queryTokens && criteria.queryTokens.length >= 3)) {
     return "Я могу помочь найти заказ. Для этого лучше указать телефон, трек-номер или полные ФИО вместе с адресом доставки.";
   }
 
