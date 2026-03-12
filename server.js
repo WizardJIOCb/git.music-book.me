@@ -529,6 +529,11 @@ function getDirectAssistantReply(message) {
   const asksAboutRomanaBrother =
     /(брат\s+роман|брат\s+у\s+роман|у\s+роман\s+есть\s+брат|есть\s+ли\s+у\s+роман\s+брат|кто\s+брат\s+роман)/.test(text) ||
     /^(а\s+)?брат\s+есть\??$/.test(text);
+  const asksAboutRomanaCousinBrother =
+    /(двоюродн\w*\s+брат\s+роман|двоюродн\w*\s+брат\s+у\s+роман|у\s+роман\s+есть\s+двоюродн\w*\s+брат|есть\s+ли\s+у\s+роман\s+двоюродн\w*\s+брат|кто\s+двоюродн\w*\s+брат\s+роман)/.test(text) ||
+    /^(а\s+)?двоюрд?ный\s+брат\s+есть\??$/.test(text) ||
+    /^(а\s+)?двоюродный\s+брат\s+есть\??$/.test(text);
+  const asksAboutGulik = /(гулик)/.test(text);
 
   if (asksAboutRomanaSocials) {
     return [
@@ -559,6 +564,17 @@ function getDirectAssistantReply(message) {
 
   if (asksAboutRomanaBrother) {
     return "Да, у Романы есть родной брат — Родион Калимуллин.";
+  }
+
+  if (asksAboutRomanaCousinBrother) {
+    return [
+      "Да, у Романы есть двоюродные братья.",
+      "Это Лев Свидер и Йенс Свидер."
+    ].join("\n");
+  }
+
+  if (asksAboutGulik) {
+    return "В известных фактах о проекте и семье Романы человека с фамилией Гулик нет, поэтому не буду придумывать детали.";
   }
 
   if (asksAboutAmira) {
