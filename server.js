@@ -523,6 +523,22 @@ function getDirectAssistantReply(message) {
   const asksAboutRomanaWebsite = mentionsRomana && /(сайт|сайта|сайте|официальный сайт|website|вебсайт)/.test(text);
   const asksAboutAmira = /(амира)/.test(text);
   const asksAboutAirat = /(айрат)/.test(text);
+  const asksAboutRomanaMother =
+    /(мама\s+роман|мать\s+роман|кто\s+мама\s+роман|кто\s+мать\s+роман|у\s+роман\s+есть\s+мама|есть\s+ли\s+у\s+роман\s+мама)/.test(text) ||
+    /^(а\s+)?мама\??$/.test(text);
+  const asksAboutRomanaFather =
+    /(папа\s+роман|отец\s+роман|кто\s+папа\s+роман|кто\s+отец\s+роман|у\s+роман\s+есть\s+папа|есть\s+ли\s+у\s+роман\s+папа)/.test(text) ||
+    /^(а\s+)?папа\??$/.test(text);
+  const asksAboutRomanaAunt =
+    /(т[её]тя\s+роман|кто\s+т[её]тя\s+роман|у\s+роман\s+есть\s+т[её]тя|есть\s+ли\s+у\s+роман\s+т[её]тя)/.test(text) ||
+    /^(а\s+)?т[её]тя\??$/.test(text);
+  const asksAboutRomanaHusband =
+    /(муж\s+роман|кто\s+муж\s+роман|у\s+роман\s+есть\s+муж|есть\s+ли\s+у\s+роман\s+муж)/.test(text) ||
+    /^(а\s+)?муж\s+есть\??$/.test(text);
+  const asksAboutRomanaDaughter =
+    /(дочь\s+роман|дочка\s+роман|кто\s+дочь\s+роман|кто\s+дочка\s+роман|у\s+роман\s+есть\s+дочь|есть\s+ли\s+у\s+роман\s+дочь)/.test(text) ||
+    /^(а\s+)?дочь\s+есть\??$/.test(text) ||
+    /^(а\s+)?дочка\s+есть\??$/.test(text);
   const asksAboutOfficeHours = /(до скольки|режим работы|время работы|часы работы|когда работает|когда открыт|открыт ли|офис|магазин|самовывоз|адрес)/.test(text);
   const asksAboutRomanaGrandmother = /(кто\s+бабушк|бабушка\s+роман|бабушку\s+роман)/.test(text);
   const asksAboutRomanaGrandfather = /(кто\s+дед|кто\s+дедушк|дед\s+роман|дедушка\s+роман|дедушку\s+роман)/.test(text);
@@ -562,6 +578,14 @@ function getDirectAssistantReply(message) {
     return "Дедушка Романы по линии мамы — Иван Павлович Ладыженко.";
   }
 
+  if (asksAboutRomanaMother) {
+    return "Мама Романы — Анна Ивановна Ладыженко.";
+  }
+
+  if (asksAboutRomanaFather) {
+    return "Папа Романы — Калимуллин Данир Зинурович.";
+  }
+
   if (asksAboutRomanaBrother) {
     return "Да, у Романы есть родной брат — Родион Калимуллин.";
   }
@@ -575,6 +599,18 @@ function getDirectAssistantReply(message) {
 
   if (asksAboutGulik) {
     return "В известных фактах о проекте и семье Романы человека с фамилией Гулик нет, поэтому не буду придумывать детали.";
+  }
+
+  if (asksAboutRomanaAunt) {
+    return "Тётя Романы — Людмила Ивановна Ладыженко.";
+  }
+
+  if (asksAboutRomanaDaughter) {
+    return "У Романы есть дочь Амира.";
+  }
+
+  if (asksAboutRomanaHusband) {
+    return "Да, муж Романы — Айрат.";
   }
 
   if (asksAboutAmira) {
