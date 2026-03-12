@@ -597,6 +597,8 @@ function getDirectAssistantReply(message) {
   const asksAboutRomanaWebsite = mentionsRomana && /(сайт|сайта|сайте|официальный сайт|website|вебсайт)/.test(text);
   const asksAboutAmira = /(амира)/.test(text);
   const asksAboutAirat = /(айрат)/.test(text);
+  const asksAboutDelivery =
+    /(способ(?:ы)?\s+доставк|как\s+работает\s+доставк|доставк|самовывоз|забрат|забрать|пункт выдачи|пвз|сдэк|cdek|boxberry|сколько дней|срок доставк)/.test(text);
   const asksAboutRomanaMother =
     /(мама\s+роман|мать\s+роман|кто\s+мама\s+роман|кто\s+мать\s+роман|у\s+роман\s+есть\s+мама|есть\s+ли\s+у\s+роман\s+мама)/.test(text) ||
     /^(а\s+)?мама\??$/.test(text);
@@ -651,6 +653,21 @@ function getDirectAssistantReply(message) {
       "- VK: [https://vk.com/romanasbook](https://vk.com/romanasbook)",
       "- Telegram: [https://t.me/romanasbook](https://t.me/romanasbook)",
       "- MAX: [https://max.ru/romanasbook](https://max.ru/romanasbook)"
+    ].join("\n");
+  }
+
+  if (asksAboutDelivery) {
+    return [
+      "Вот что известно о доставке и самовывозе:",
+      STORE_FACTS.delivery.moscowSpb,
+      STORE_FACTS.delivery.russia,
+      `Способы доставки: ${STORE_FACTS.delivery.providers}`,
+      STORE_FACTS.delivery.expressMoscow,
+      STORE_FACTS.delivery.belarusKazakhstan,
+      STORE_FACTS.delivery.orderFlow,
+      `Самовывоз: ${STORE_FACTS.contacts.address}`,
+      `Часы работы: ${STORE_FACTS.contacts.hours}`,
+      `Контакты: ${STORE_FACTS.contacts.phone}, ${STORE_FACTS.contacts.email}`
     ].join("\n");
   }
 
