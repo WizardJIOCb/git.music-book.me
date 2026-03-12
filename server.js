@@ -569,8 +569,16 @@ function getOrderAssistantReply(message) {
   const text = normalizeSearchText(message);
   const criteria = extractOrderLookupCriteria(message);
   const hasDirectPhoneLookup = Boolean(criteria.phone) && !criteria.trackNumber;
+  const hasDirectTrackLookup = Boolean(criteria.trackNumber);
+  const hasSpecificOrderIntent =
+    /(мой|моя|моего|моему|заказ|получател|адрес|по адресу|по имени|найди заказ|статус заказа|где мой)/i.test(text) &&
+    Boolean(criteria.queryTokens && criteria.queryTokens.length >= 3);
 
-  if (!isOrderQuestion(text) && !hasDirectPhoneLookup) {
+  if (!isOrderQuestion(text) && !hasDirectPhoneLookup && !hasDirectTrackLookup) {
+    return "";
+  }
+
+  if (!hasDirectPhoneLookup && !hasDirectTrackLookup && !hasSpecificOrderIntent) {
     return "";
   }
 
