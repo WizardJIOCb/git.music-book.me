@@ -230,6 +230,7 @@ function addMessage(role, content, options = {}) {
   const roleEl = fragment.querySelector(".role");
   const bubbleEl = fragment.querySelector(".bubble");
   const shouldAnimate = Boolean(options.animateEntrance);
+  const shouldAutoScroll = options.autoScroll !== false;
 
   messageEl.dataset.role = role;
   if (shouldAnimate) {
@@ -248,7 +249,9 @@ function addMessage(role, content, options = {}) {
       messageEl.classList.remove("message--enter");
     });
   }
-  scrollMessagesToBottom(role === "assistant" ? "smooth" : "auto");
+  if (shouldAutoScroll) {
+    scrollMessagesToBottom(role === "assistant" ? "smooth" : "auto");
+  }
 }
 
 function renderConversation(conversation, options = {}) {
@@ -265,7 +268,8 @@ function renderConversation(conversation, options = {}) {
     const lastMessageIndex = messages.length - 1;
     for (const [index, message] of messages.entries()) {
       addMessage(message.role, message.content, {
-        animateEntrance: Boolean(options.animateLatestAssistant) && index === lastMessageIndex && message.role === "assistant"
+        animateEntrance: Boolean(options.animateLatestAssistant) && index === lastMessageIndex && message.role === "assistant",
+        autoScroll: options.autoScroll
       });
     }
   }
@@ -588,9 +592,14 @@ async function submitPrompt(prompt) {
       throw new Error(data.error || "Не удалось получить ответ");
     }
 
+    const previousBottomOffset = Math.max(0, messagesEl.scrollHeight - messagesEl.scrollTop);
     currentConversation = data.conversation;
     updateUrlForConversation(currentConversation.id);
-    renderConversation(currentConversation, { animateLatestAssistant: true });
+    renderConversation(currentConversation, {
+      animateLatestAssistant: true,
+      autoScroll: false
+    });
+    messagesEl.scrollTop = Math.max(0, messagesEl.scrollHeight - previousBottomOffset);
     promptEl.value = "";
     smoothScrollToLatestMessage();
   } catch (error) {
