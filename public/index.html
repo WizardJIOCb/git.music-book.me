@@ -1,0 +1,106 @@
+﻿<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Music Book GPT</title>
+    <meta
+      name="description"
+      content="Онлайн-помощник для visitors music-book.me: помогает рассказать о проекте, книгах издательства Romana's book, покупке, доставке, Романе и навигации по сайту."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="shortcut icon" href="/favicon.png" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow"><a href="https://music-book.me" target="_blank" rel="noreferrer">music-book.me</a></p>
+        <h1>Music Book GPT</h1>
+        <p class="lede">
+          Цифровой ассистент для знакомства с проектом и книгами издательства Romana's book. Он может рассказать о книгах,
+          дать ссылку на страницу конкретной книги, подсказать по покупке, цене, доставке, самовывозу, рассказать кто такая Романа
+          и помочь сориентироваться по сайту.
+        </p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-title">Поговорить с ассистентом</p>
+            <p class="panel-subtitle">Спроси о проекте, книге, покупке, доставке или следующем шаге</p>
+          </div>
+          <div class="panel-actions">
+            <button type="button" class="ghost-button" id="new-chat-button">Новый диалог</button>
+            <button type="button" class="ghost-button" id="share-button">Поделиться</button>
+            <div class="conversation-meta conversation-meta--top" id="conversation-meta">Диалог ещё не сохранён</div>
+          </div>
+        </div>
+
+        <div class="suggestions" id="suggestions">
+          <button type="button" class="suggestion" data-prompt="Объясни простыми словами, что такое Music Book.">Что такое Music Book?</button>
+          <button type="button" class="suggestion" data-prompt="Какие книги сейчас есть на сайте?">Какие книги есть?</button>
+          <button type="button" class="suggestion" data-prompt="Кто такая Романа и чем она занимается?">Об авторе Романа</button>
+          <button type="button" class="suggestion" data-prompt="Какие есть способы доставки и как работает доставка книг?">Способы доставки</button>
+        </div>
+
+        <div class="messages" id="messages" aria-live="polite"></div>
+
+        <form class="composer" id="chat-form">
+          <textarea
+            id="prompt"
+            name="prompt"
+            rows="3"
+            placeholder="Например: расскажи про книгу Щелкунчик и как её купить."
+            required
+          ></textarea>
+          <div class="composer-bar">
+            <p class="hint">Напиши Ваш вопрос или уточнения для ассистента, по каким то вещам связаных с <a href="https://music-book.me" target="_blank" rel="noreferrer">music-book.me</a>. Для быстрой отправки можно нажать Ctrl + Enter.</p>
+            <button type="submit" id="submit-button">Отправить</button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <section class="command-console hidden" id="command-console" aria-hidden="true">
+      <div class="command-console__backdrop" id="console-backdrop"></div>
+      <div class="command-console__panel">
+        <div class="command-console__head">
+          <p class="command-console__title">Music Book Console</p>
+          <p class="command-console__subtitle">Команды: help, dialogs, dialogs &lt;поиск&gt;, load &lt;id&gt;, rename &lt;current|id&gt; &lt;новое имя&gt;, delete &lt;current|id&gt;, model, model &lt;id&gt;, share, new, clear, test &lt;текст&gt;, ping</p>
+        </div>
+        <div class="command-console__log" id="console-log"></div>
+        <form class="command-console__form" id="console-form">
+          <span class="command-console__prompt">~</span>
+          <input id="console-input" type="text" autocomplete="off" placeholder="Введите команду" />
+        </form>
+      </div>
+    </section>
+
+    <template id="message-template">
+      <article class="message">
+        <p class="role"></p>
+        <div class="bubble"></div>
+      </article>
+    </template>
+
+    <template id="console-line-template">
+      <div class="console-line">
+        <span class="console-line__label"></span>
+        <span class="console-line__text"></span>
+      </div>
+    </template>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
+
+
+
+
+

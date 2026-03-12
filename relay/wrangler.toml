@@ -1,0 +1,8 @@
+﻿name = "music-book-openai-relay"
+main = "cloudflare-worker.js"
+compatibility_date = "2026-03-12"
+workers_dev = true
+
+[vars]
+ALLOW_ORIGIN = "https://gpt.music-book.me"
+OPENAI_PROJECT = ""

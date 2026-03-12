@@ -1,0 +1,9 @@
+﻿{
+  "name": "gpt.music-book.me",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Minimal GPT-powered site for music-book.me",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
