@@ -538,8 +538,8 @@ async function runCommand(rawCommand) {
       return;
     }
 
-    addConsoleLine("system", `Найдено диалогов: ${filtered.length}. Показываю первые ${Math.min(filtered.length, 12)}.`);
-    for (const conversation of filtered.slice(0, 12)) {
+    addConsoleLine("system", `Найдено диалогов: ${filtered.length}. Показываю последние ${Math.min(filtered.length, 12)}.`);
+    for (const conversation of filtered.slice(-12)) {
       const model = conversation.modelOverride || "default";
       addConsoleLine(
         "dialog",
