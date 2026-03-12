@@ -539,6 +539,10 @@ function getDirectAssistantReply(message) {
     /(дочь\s+роман|дочка\s+роман|кто\s+дочь\s+роман|кто\s+дочка\s+роман|у\s+роман\s+есть\s+дочь|есть\s+ли\s+у\s+роман\s+дочь)/.test(text) ||
     /^(а\s+)?дочь\s+есть\??$/.test(text) ||
     /^(а\s+)?дочка\s+есть\??$/.test(text);
+  const asksAboutRodion = /(кто\s+так(ой|ой)\s+родион|кто\s+такой\s+родион|родион\s+кто\s+это|кто\s+такой\s+калимуллин\s+родион(\s+данирович)?)/.test(text);
+  const asksAboutLevSvider = /(кто\s+так(ой|ой)\s+лев\s+свидер|кто\s+такой\s+лев\s+свидер|лев\s+свидер\s+кто\s+это|кто\s+такой\s+л[её]ва\s+свидер)/.test(text);
+  const asksAboutJensSvider = /(кто\s+так(ой|ой)\s+йенс\s+свидер|кто\s+такой\s+йенс\s+свидер|йенс\s+свидер\s+кто\s+это)/.test(text);
+  const asksAboutDanir = /(кто\s+так(ой|ой)\s+данир|кто\s+такой\s+калимуллин\s+данир(\s+зинурович)?|данир\s+кто\s+это)/.test(text);
   const asksAboutOfficeHours = /(до скольки|режим работы|время работы|часы работы|когда работает|когда открыт|открыт ли|офис|магазин|самовывоз|адрес)/.test(text);
   const asksAboutRomanaGrandmother = /(кто\s+бабушк|бабушка\s+роман|бабушку\s+роман)/.test(text);
   const asksAboutRomanaGrandfather = /(кто\s+дед|кто\s+дедушк|дед\s+роман|дедушка\s+роман|дедушку\s+роман)/.test(text);
@@ -584,6 +588,22 @@ function getDirectAssistantReply(message) {
 
   if (asksAboutRomanaFather) {
     return "Папа Романы — Калимуллин Данир Зинурович.";
+  }
+
+  if (asksAboutRodion) {
+    return "Родион Калимуллин — родной брат Романы, а также автор этого сайта и приложения. Подробнее: https://rodion.pro и https://rodion.pro/ru/resume.";
+  }
+
+  if (asksAboutLevSvider) {
+    return "Лев Сергеевич Свидер — двоюродный брат Романы. Его страницу можно посмотреть здесь: https://vk.com/someday4sure.";
+  }
+
+  if (asksAboutJensSvider) {
+    return "Йенс Сергеевич Свидер — двоюродный брат Романы. По известным проектным данным, сейчас он живёт в Америке, женат и работает в транспортной сфере.";
+  }
+
+  if (asksAboutDanir) {
+    return "Калимуллин Данир Зинурович — папа Романы и Родиона. По известным проектным данным, он занимался нефтяной отраслью, работал в Москве и сейчас находится на пенсии.";
   }
 
   if (asksAboutRomanaBrother) {
