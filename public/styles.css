@@ -703,7 +703,7 @@ button:disabled,
     z-index: 6;
     margin-top: auto;
     padding-top: 10px;
-    padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
     background: linear-gradient(180deg, rgba(255, 252, 246, 0.82), rgba(255, 250, 240, 0.98) 18%);
     backdrop-filter: blur(16px);
   }
@@ -722,7 +722,7 @@ button:disabled,
 
   #submit-button {
     margin-top: auto;
-    margin-bottom: 0;
+    margin-bottom: 4px;
   }
 
   .hint {

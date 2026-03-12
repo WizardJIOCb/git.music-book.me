@@ -165,12 +165,6 @@ function scrollMessagesToBottom(behavior = "auto") {
 function smoothScrollToLatestMessage() {
   window.requestAnimationFrame(() => {
     window.requestAnimationFrame(() => {
-      const latestMessageEl = messagesEl?.lastElementChild;
-      if (latestMessageEl instanceof HTMLElement) {
-        latestMessageEl.scrollIntoView({ behavior: "smooth", block: "end" });
-        return;
-      }
-
       scrollMessagesToBottom("smooth");
     });
   });
