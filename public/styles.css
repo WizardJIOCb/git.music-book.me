@@ -416,8 +416,9 @@ button:disabled,
   }
 
   h1 {
-    font-size: clamp(2rem, 10vw, 3.1rem);
-    max-width: 7.2em;
+    font-size: clamp(1.8rem, 8.4vw, 2.7rem);
+    max-width: none;
+    white-space: nowrap;
   }
 
   .hero-description-toggle {
@@ -459,8 +460,7 @@ button:disabled,
   }
 
   .messages,
-  .composer,
-  .suggestions {
+  .composer {
     padding-inline: 16px;
   }
 
@@ -561,25 +561,26 @@ button:disabled,
   }
 
   .suggestions {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(62%, max-content);
+    display: flex;
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x proximity;
     gap: 8px;
-    padding-inline: 16px;
+    padding-top: 12px;
+    padding-inline: 12px;
     padding-bottom: 4px;
     -webkit-overflow-scrolling: touch;
   }
 
   .suggestion {
-    width: auto;
-    min-height: 46px;
-    max-width: 86vw;
+    flex: 0 0 auto;
+    width: fit-content;
+    min-height: 42px;
+    max-width: 72vw;
     text-align: left;
     scroll-snap-align: start;
-    padding: 10px 14px;
+    padding: 8px 12px;
+    font-size: 0.92rem;
     white-space: normal;
     line-height: 1.35;
   }

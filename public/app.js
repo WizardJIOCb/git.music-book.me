@@ -941,6 +941,13 @@ window.addEventListener("keydown", (event) => {
 });
 
 async function boot() {
+  if (actionsMenuBackdropEl && actionsMenuBackdropEl.parentElement !== document.body) {
+    document.body.appendChild(actionsMenuBackdropEl);
+  }
+  if (actionsMenuEl && actionsMenuEl.parentElement !== document.body) {
+    document.body.appendChild(actionsMenuEl);
+  }
+
   renderConversation(null);
   await checkHealth();
 
